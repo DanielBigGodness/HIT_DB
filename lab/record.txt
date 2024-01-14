@@ -1,0 +1,166 @@
+实体
+
+CREATE TABLE Student (
+    stu_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL,
+    sex CHAR(1) NOT NULL,
+    birthday DATE NOT NULL,
+    class_id CHAR(10) NOT NULL,
+    CONSTRAINT chk_sex CHECK (sex IN ('M', 'F')),
+    FOREIGN KEY (class_id) REFERENCES Class(class_id)
+);
+
+CREATE TABLE Class (
+    class_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL,
+    major_id CHAR(10) NOT NULL,
+    FOREIGN KEY (major_id) REFERENCES Major(major_id)
+);
+
+CREATE TABLE Major (
+    major_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL,
+    school_id CHAR(10) NOT NULL,
+    FOREIGN KEY (school_id) REFERENCES School(school_id)
+);
+
+CREATE TABLE School (
+    school_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL,
+    leader_id CHAR(10) NOT NULL,
+    FOREIGN KEY (leader_id) REFERENCES Leader(leader_id)
+);
+
+CREATE TABLE Leader (
+    leader_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL
+);
+
+CREATE TABLE Score (
+    score_id CHAR(10) PRIMARY KEY,
+    score_val INT NOT NULL,
+    stu_id CHAR(10) NOT NULL,
+    course_id CHAR(10) NOT NULL,
+    FOREIGN KEY (stu_id) REFERENCES Student(stu_id),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+CREATE TABLE Course (
+    course_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL
+);
+
+CREATE TABLE Teacher (
+    teacher_id CHAR(10) PRIMARY KEY,
+    name CHAR(10) NOT NULL,
+    school_id CHAR(10) NOT NULL,
+    FOREIGN KEY (school_id) REFERENCES School(school_id)
+);
+
+
+
+关系
+
+CREATE TABLE Choose (
+    stu_id CHAR(10) NOT NULL,
+    course_id CHAR(10) NOT NULL,
+    FOREIGN KEY (stu_id) REFERENCES Student(stu_id),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+CREATE TABLE Teach (
+    teacher_id CHAR(10) NOT NULL,
+    course_id CHAR(10) NOT NULL,
+    FOREIGN KEY (teacher_id) REFERENCES Teacher(teacher_id),
+    FOREIGN KEY (course_id) REFERENCES Course(course_id)
+);
+
+
+
+insert into Leader values ('leader001','leader_jia');
+insert into Leader values ('leader002','leader_yi');
+insert into Leader values ('leader003','leader_bin');
+
+
+insert into School values ('school001','school_jia','leader001');
+insert into School values ('school002','school_yi','leader002');
+insert into School values ('school003','school_bin','leader003');
+
+
+insert into Major values ('major001','major_jia','school001');
+insert into Major values ('major002','major_yi','school002');
+insert into Major values ('major003','major_bin','school003');
+insert into Major values ('major004','major_din','school003');
+
+
+insert into Class values ('class001','class_jia','major001');
+insert into Class values ('class002','class_yi','major002');
+insert into Class values ('class003','class_bin','major003');
+insert into Class values ('class004','class_din','major003');
+insert into Class values ('class006','class_wu','major003');
+insert into Class values ('class005','class_ji','major001');
+
+
+insert into Student values ('student001','stu_jia','F','2023-11-15','class001');
+insert into Student values ('student002','stu_yi','M','2023-11-16','class002');
+insert into Student values ('student003','stu_bin','M','2023-11-17','class003');
+insert into Student values ('student004','stu_din','F','2023-11-17','class003');
+insert into Student values ('student006','stu_wu','M','2023-11-17','class003');
+insert into Student values ('student005','stu_ji','M','2023-11-17','class001');
+insert into Student values ('student007','stu_jia','F','2023-11-17','class004');
+insert into Student values ('student008','stu_yi','M','2023-11-17','class005');
+insert into Student values ('student009','stu_bin','M','2023-11-17','class005');
+insert into Student values ('student010','stu_din','F','2023-11-17','class006');
+insert into Student values ('student011','stu_wu','M','2023-11-17','class004');
+insert into Student values ('student012','stu_ji','M','2023-11-17','class001');
+
+
+
+insert into Course values ('course001','course_jia');
+insert into Course values ('course002','course_yi');
+insert into Course values ('course003','course_bin');
+
+insert into Teacher values ('teacher001','teacherjia','school001');
+insert into Teacher values ('teacher002','teacheryi','school002');
+insert into Teacher values ('teacher003','teacherbin','school003');
+insert into Teacher values ('teacher004','teacherdin','school001');
+
+insert into Score values ('score001','23','student001','course001');
+insert into Score values ('score002','43','student001','course002');
+insert into Score values ('score003','60','student002','course003');
+insert into Score values ('score004','100','student004','course003');
+
+insert into Choose values ('student001','course001');
+insert into Choose values ('student001','course002');
+insert into Choose values ('student002','course003');
+insert into Choose values ('student004','course003');
+
+insert into Teach values ('teacher001','course001');
+insert into Teach values ('teacher002','course002');
+insert into Teach values ('teacher003','course002');
+insert into Teach values ('teacher004','course003');
+
+
+专业major001都有那些人
+create VIEW major001_on_DB AS SELECT Student.stu_id,Student.name,Student.class_id from Student join Class on(Student.class_id=Class.class_id) where major_id='major001';
+学院school001都开了哪些课
+create VIEW school001_on_DB AS SELECT Teach.course_id,Teach.teacher_id from Teach join Teacher on(Teach.teacher_id=Teacher.teacher_id) where Teacher.school_id='school001';
+班级class001有挂科经历的人
+create VIEW class001_on_DB AS SELECT Student.stu_id,Student.name,Student.sex,Score.course_id from Student join Score on(Student.stu_id=Score.stu_id) where Student.class_id='class001' AND Score.score_val<60;
+
+索引
+CREATE INDEX student_name_index ON Student(name(10));
+
+show index from Student;
+
+
+
+
+
+
+
+
+
+
+
+
